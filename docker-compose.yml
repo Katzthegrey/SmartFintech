@@ -5,9 +5,9 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: smartguard
+      POSTGRES_DB: SmartFintechFinancial
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ANGEL935
     ports:
       - "5432:5432"
     volumes:
