@@ -22,7 +22,96 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.PasswordHistory", b =>
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.FailedLoginAttempt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<int>("AttemptNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("attempt_number");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UpdatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("updated_by");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("user_agent");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_failed_login_attempts_created_at");
+
+                    b.HasIndex("Email")
+                        .HasDatabaseName("ix_failed_login_attempts_email");
+
+                    b.HasIndex("IpAddress")
+                        .HasDatabaseName("ix_failed_login_attempts_ip");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_failed_login_attempts_user_id");
+
+                    b.HasIndex("IpAddress", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_failed_login_attempts_ip_time");
+
+                    b.ToTable("failed_login_attempts", "identity");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.LoginLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,11 +125,65 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("password_hash");
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DeviceType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("device_type");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("failure_reason");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<bool>("IsSuccess")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_success");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("location");
+
+                    b.Property<bool>("TwoFactorUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("two_factor_used");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UpdatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("updated_by");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("user_agent");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -49,20 +192,380 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedAt")
-                        .HasDatabaseName("ix_password_histories_created_at");
+                        .IsDescending()
+                        .HasDatabaseName("ix_login_logs_created_at");
+
+                    b.HasIndex("IsSuccess")
+                        .HasDatabaseName("ix_login_logs_is_success");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_password_histories_user_id");
+                        .HasDatabaseName("ix_login_logs_user_id");
 
-                    b.HasIndex("UserId", "PasswordHash")
+                    b.HasIndex("UserId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_login_logs_user_time");
+
+                    b.ToTable("login_logs", "identity");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.PasswordHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("ChangedByIp")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnName("changed_by_ip");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UpdatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("updated_by");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_password_history_user_id");
+
+                    b.HasIndex("UserId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_password_history_user_changed");
+
+                    b.ToTable("password_history", "identity");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsSensitive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_sensitive");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("scope");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category")
+                        .HasDatabaseName("ix_permissions_category");
+
+                    b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_password_histories_user_password");
+                        .HasDatabaseName("ix_permissions_name");
 
-                    b.ToTable("password_histories", "identity", t =>
+                    b.HasIndex("Scope")
+                        .HasDatabaseName("ix_permissions_scope");
+
+                    b.HasIndex("Category", "Scope")
+                        .HasDatabaseName("ix_permissions_category_scope");
+
+                    b.ToTable("permissions", "identity", t =>
                         {
-                            t.HasComment("Historical password hashes for password reuse prevention");
+                            t.HasComment("System permissions for fine-grained access control");
+                        });
 
-                            t.HasCheckConstraint("ck_password_histories_created_at", "created_at <= CURRENT_TIMESTAMP");
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"),
+                            Category = "Account",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View own accounts",
+                            IsSensitive = false,
+                            Name = "accounts:read:self",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"),
+                            Category = "Account",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View all accounts",
+                            IsSensitive = true,
+                            Name = "accounts:read:all",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"),
+                            Category = "Account",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create new accounts",
+                            IsSensitive = true,
+                            Name = "accounts:create",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"),
+                            Category = "Account",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Update own account",
+                            IsSensitive = false,
+                            Name = "accounts:update:self",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f"),
+                            Category = "Account",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Update any account",
+                            IsSensitive = true,
+                            Name = "accounts:update:all",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"),
+                            Category = "Transaction",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View own transactions",
+                            IsSensitive = false,
+                            Name = "transactions:read:self",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b"),
+                            Category = "Transaction",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View all transactions",
+                            IsSensitive = true,
+                            Name = "transactions:read:all",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c"),
+                            Category = "Transaction",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create transactions",
+                            IsSensitive = false,
+                            Name = "transactions:create",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d"),
+                            Category = "Transaction",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Reverse transactions",
+                            IsSensitive = true,
+                            Name = "transactions:reverse",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e"),
+                            Category = "Investment",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View own investments",
+                            IsSensitive = false,
+                            Name = "investments:read:self",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f"),
+                            Category = "Investment",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View all investments",
+                            IsSensitive = true,
+                            Name = "investments:read:all",
+                            Scope = "advisor"
+                        },
+                        new
+                        {
+                            Id = new Guid("6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a"),
+                            Category = "Investment",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Recommend investments",
+                            IsSensitive = true,
+                            Name = "investments:recommend",
+                            Scope = "advisor"
+                        },
+                        new
+                        {
+                            Id = new Guid("7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b"),
+                            Category = "Investment",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage investment portfolios",
+                            IsSensitive = true,
+                            Name = "investments:manage:portfolio",
+                            Scope = "advisor"
+                        },
+                        new
+                        {
+                            Id = new Guid("8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c"),
+                            Category = "Fraud",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View fraud alerts",
+                            IsSensitive = true,
+                            Name = "fraud:alerts:read",
+                            Scope = "security"
+                        },
+                        new
+                        {
+                            Id = new Guid("9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d"),
+                            Category = "Fraud",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Review suspicious transactions",
+                            IsSensitive = true,
+                            Name = "fraud:transactions:review",
+                            Scope = "security"
+                        },
+                        new
+                        {
+                            Id = new Guid("0b1c2d3e-4f5a-6b7c-8d9e-0f1a2b3c4d5e"),
+                            Category = "Fraud",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage fraud detection rules",
+                            IsSensitive = true,
+                            Name = "fraud:rules:manage",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f"),
+                            Category = "Compliance",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Generate compliance reports",
+                            IsSensitive = true,
+                            Name = "compliance:reports:generate",
+                            Scope = "compliance"
+                        },
+                        new
+                        {
+                            Id = new Guid("2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"),
+                            Category = "Compliance",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View audit logs",
+                            IsSensitive = true,
+                            Name = "compliance:audit:read",
+                            Scope = "compliance"
+                        },
+                        new
+                        {
+                            Id = new Guid("3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"),
+                            Category = "User",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View own profile",
+                            IsSensitive = false,
+                            Name = "users:read:self",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            Category = "User",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "View all user profiles",
+                            IsSensitive = true,
+                            Name = "users:read:all",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d"),
+                            Category = "User",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Update own profile",
+                            IsSensitive = false,
+                            Name = "users:update:self",
+                            Scope = "client"
+                        },
+                        new
+                        {
+                            Id = new Guid("6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e"),
+                            Category = "User",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Update any user profile",
+                            IsSensitive = true,
+                            Name = "users:update:all",
+                            Scope = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f"),
+                            Category = "User",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage user roles",
+                            IsSensitive = true,
+                            Name = "users:roles:manage",
+                            Scope = "admin"
                         });
                 });
 
@@ -80,6 +583,14 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("created_by");
+
                     b.Property<string>("CreatedByIp")
                         .IsRequired()
                         .HasMaxLength(45)
@@ -89,6 +600,12 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsRevoked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_revoked");
 
                     b.Property<string>("ReplacedByToken")
                         .HasMaxLength(500)
@@ -110,6 +627,20 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnType("character varying(500)")
                         .HasColumnName("token");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("updated_by");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
@@ -126,12 +657,918 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_refresh_tokens_user_id");
 
-                    b.HasIndex("UserId", "ExpiresAt", "RevokedAt")
-                        .HasDatabaseName("ix_refresh_tokens_user_expiry_status");
-
                     b.ToTable("refresh_tokens", "identity", t =>
                         {
-                            t.HasComment("Refresh tokens for JWT authentication and session management");
+                            t.HasCheckConstraint("ck_refresh_tokens_expiry", "expires_at > created_at");
+                        });
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("CanBeAssigned")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("can_be_assigned");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("General")
+                        .HasColumnName("category");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsSystemRole")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_system_role");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Priority")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("priority");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category")
+                        .HasDatabaseName("ix_roles_category");
+
+                    b.HasIndex("IsSystemRole")
+                        .HasDatabaseName("ix_roles_is_system_role");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_roles_name");
+
+                    b.HasIndex("Priority")
+                        .HasDatabaseName("ix_roles_priority");
+
+                    b.ToTable("roles", "identity", t =>
+                        {
+                            t.HasComment("System roles for role-based authorization");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            CanBeAssigned = true,
+                            Category = "Client",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Basic financial planning client",
+                            IsSystemRole = true,
+                            Name = "Client",
+                            Priority = 10,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            CanBeAssigned = true,
+                            Category = "Client",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Investment account holder",
+                            IsSystemRole = true,
+                            Name = "Investor",
+                            Priority = 20,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            CanBeAssigned = true,
+                            Category = "Client",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "High-value premium investor",
+                            IsSystemRole = true,
+                            Name = "PremiumInvestor",
+                            Priority = 30,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            CanBeAssigned = true,
+                            Category = "Client",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Business/corporate investor",
+                            IsSystemRole = true,
+                            Name = "BusinessInvestor",
+                            Priority = 40,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"),
+                            CanBeAssigned = true,
+                            Category = "Advisor",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Registered financial advisor",
+                            IsSystemRole = true,
+                            Name = "FinancialAdvisor",
+                            Priority = 60,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            CanBeAssigned = true,
+                            Category = "Management",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Portfolio and wealth manager",
+                            IsSystemRole = true,
+                            Name = "WealthManager",
+                            Priority = 70,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("f2a1b0c9-d8e7-6f5a-4b3c-2d1e0f9a8b7c"),
+                            CanBeAssigned = true,
+                            Category = "Support",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Customer support agent",
+                            IsSystemRole = true,
+                            Name = "SupportAgent",
+                            Priority = 50,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"),
+                            CanBeAssigned = true,
+                            Category = "Security",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Fraud detection and prevention specialist",
+                            IsSystemRole = true,
+                            Name = "FraudAnalyst",
+                            Priority = 75,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            CanBeAssigned = true,
+                            Category = "Compliance",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Regulatory compliance officer",
+                            IsSystemRole = true,
+                            Name = "ComplianceOfficer",
+                            Priority = 90,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            CanBeAssigned = true,
+                            Category = "Admin",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Financial operations administrator",
+                            IsSystemRole = true,
+                            Name = "FinanceAdmin",
+                            Priority = 80,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            CanBeAssigned = true,
+                            Category = "Admin",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "System administrator with full access",
+                            IsSystemRole = true,
+                            Name = "SuperAdmin",
+                            Priority = 100,
+                            UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.RolePermission", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("permission_id");
+
+                    b.Property<bool>("CanDelegate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("can_delegate");
+
+                    b.Property<DateTime>("GrantedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("granted_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("GrantedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("granted_by");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId")
+                        .HasDatabaseName("ix_role_permissions_permission_id");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_role_permissions_role_id");
+
+                    b.HasIndex("RoleId", "CanDelegate")
+                        .HasDatabaseName("ix_role_permissions_delegate");
+
+                    b.ToTable("role_permissions", "identity", t =>
+                        {
+                            t.HasComment("Many-to-many relationship between roles and permissions");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e8a7d5f2-1b4c-4a9d-8f3e-6c5b9a8d7f1c"),
+                            PermissionId = new Guid("8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("a3b4c5d6-e7f8-9a0b-c1d2-e3f4a5b6c7d8"),
+                            PermissionId = new Guid("8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("b9c8d7e6-f5a4-b3c2-d1e0-f9a8b7c6d5e4"),
+                            PermissionId = new Guid("8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f"),
+                            PermissionId = new Guid("8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            PermissionId = new Guid("5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            PermissionId = new Guid("6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            PermissionId = new Guid("7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            PermissionId = new Guid("6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b"),
+                            PermissionId = new Guid("1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("f2a1b0c9-d8e7-6f5a-4b3c-2d1e0f9a8b7c"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("f2a1b0c9-d8e7-6f5a-4b3c-2d1e0f9a8b7c"),
+                            PermissionId = new Guid("6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"),
+                            PermissionId = new Guid("8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"),
+                            PermissionId = new Guid("9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"),
+                            PermissionId = new Guid("1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"),
+                            PermissionId = new Guid("6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            PermissionId = new Guid("1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            PermissionId = new Guid("2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            PermissionId = new Guid("1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            PermissionId = new Guid("6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            PermissionId = new Guid("7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f"),
+                            CanDelegate = false,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("0b1c2d3e-4f5a-6b7c-8d9e-0f1a2b3c4d5e"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"),
+                            PermissionId = new Guid("7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f"),
+                            CanDelegate = true,
+                            GrantedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            GrantedBy = "system:seed"
                         });
                 });
 
@@ -143,9 +1580,33 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<string>("Address")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("address");
+
+                    b.Property<decimal?>("AnnualIncome")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("annual_income");
+
+                    b.Property<string>("AssignedComplianceOfficer")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("assigned_compliance_officer");
+
+                    b.Property<string>("AssignedFinancialAdvisor")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("assigned_financial_advisor");
+
                     b.Property<string>("BackupCodes")
                         .HasColumnType("text")
                         .HasColumnName("backup_codes");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("city");
 
                     b.Property<bool>("ConsentGiven")
                         .ValueGeneratedOnAdd()
@@ -156,6 +1617,16 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                     b.Property<DateTime?>("ConsentGivenAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("consent_given_at");
+
+                    b.Property<string>("ConsentPreferences")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("consent_preferences");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("country");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -175,19 +1646,24 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(3)
-                        .HasColumnType("character(3)")
-                        .HasDefaultValue("R")
-                        .HasColumnName("currency")
-                        .IsFixedLength();
+                        .HasColumnType("character varying(3)")
+                        .HasDefaultValue("ZAR")
+                        .HasColumnName("currency");
+
+                    b.Property<decimal>("DailyTransactionLimit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(10000.00m)
+                        .HasColumnName("daily_transaction_limit");
 
                     b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("date")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_of_birth");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("email");
 
                     b.Property<bool>("EmailVerified")
@@ -195,6 +1671,11 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("email_verified");
+
+                    b.Property<string>("EmploymentStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("employment_status");
 
                     b.Property<int>("FailedLoginAttempts")
                         .ValueGeneratedOnAdd()
@@ -207,11 +1688,38 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnType("character varying(100)")
                         .HasColumnName("first_name");
 
+                    b.Property<string>("FlagReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("flag_reason");
+
+                    b.Property<DateTime?>("FlaggedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("flagged_at");
+
+                    b.Property<string>("InvestmentRiskTolerance")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Moderate")
+                        .HasColumnName("investment_risk_tolerance");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
+
+                    b.Property<bool>("IsFlaggedForReview")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_flagged_for_review");
+
+                    b.Property<string>("KycRejectionReason")
+                        .HasColumnType("text")
+                        .HasColumnName("kyc_rejection_reason");
 
                     b.Property<string>("KycStatus")
                         .IsRequired()
@@ -225,11 +1733,16 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("kyc_verified_at");
 
+                    b.Property<string>("KycVerifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("kyc_verified_by");
+
                     b.Property<string>("Language")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)")
                         .HasDefaultValue("en")
                         .HasColumnName("language");
 
@@ -262,6 +1775,16 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasDefaultValue(false)
                         .HasColumnName("marketing_opt_in");
 
+                    b.Property<decimal>("MonthlyTransactionLimit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(50000.00m)
+                        .HasColumnName("monthly_transaction_limit");
+
+                    b.Property<DateTime?>("NextReviewDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_review_date");
+
                     b.Property<DateTime?>("PasswordChangedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("password_changed_at");
@@ -272,14 +1795,64 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("password_hash");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("postal_code");
+
+                    b.Property<string>("PreferredInvestmentTypes")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("preferred_investment_types");
+
+                    b.Property<string>("PrimaryInvestmentGoal")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Growth")
+                        .HasColumnName("primary_investment_goal");
+
+                    b.Property<bool>("RequiresPeriodicReview")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("requires_periodic_review");
+
+                    b.Property<DateTime?>("RiskAssessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("risk_assessed_at");
+
+                    b.Property<string>("RiskAssessedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("risk_assessed_by");
+
+                    b.Property<string>("RiskLevel")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Low")
+                        .HasColumnName("risk_level");
+
+                    b.Property<string>("RiskNotes")
+                        .HasColumnType("text")
+                        .HasColumnName("risk_notes");
+
+                    b.Property<string>("SourceOfFunds")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("source_of_funds");
 
                     b.Property<string>("SubscriptionTier")
                         .IsRequired()
@@ -288,6 +1861,11 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnType("character varying(50)")
                         .HasDefaultValue("Free")
                         .HasColumnName("subscription_tier");
+
+                    b.Property<string>("TaxIdNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("tax_id_number");
 
                     b.Property<string>("Timezone")
                         .ValueGeneratedOnAdd()
@@ -303,16 +1881,14 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnName("two_factor_enabled");
 
                     b.Property<string>("TwoFactorSecret")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("text")
                         .HasColumnName("two_factor_secret");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Automatically updated on save");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(100)
@@ -320,6 +1896,10 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasColumnName("updated_by");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssignedFinancialAdvisor")
+                        .HasDatabaseName("ix_users_assigned_advisor")
+                        .HasFilter("assigned_financial_advisor IS NOT NULL");
 
                     b.HasIndex("Email")
                         .IsUnique()
@@ -331,6 +1911,9 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                     b.HasIndex("IsActive")
                         .HasDatabaseName("ix_users_is_active");
 
+                    b.HasIndex("IsFlaggedForReview")
+                        .HasDatabaseName("ix_users_flagged_for_review");
+
                     b.HasIndex("KycStatus")
                         .HasDatabaseName("ix_users_kyc_status");
 
@@ -339,13 +1922,115 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                         .HasDatabaseName("ix_users_phone")
                         .HasFilter("phone IS NOT NULL");
 
+                    b.HasIndex("RiskLevel")
+                        .HasDatabaseName("ix_users_risk_level");
+
+                    b.HasIndex("SubscriptionTier")
+                        .HasDatabaseName("ix_users_subscription_tier");
+
+                    b.HasIndex("CreatedAt", "KycStatus")
+                        .HasDatabaseName("ix_users_created_kyc");
+
+                    b.HasIndex("LastLoginAt", "IsActive")
+                        .HasDatabaseName("ix_users_lastlogin_active")
+                        .HasFilter("last_login_at IS NOT NULL");
+
+                    b.HasIndex("SubscriptionTier", "RiskLevel")
+                        .HasDatabaseName("ix_users_tier_risk");
+
                     b.HasIndex("IsActive", "EmailVerified", "KycStatus")
                         .HasDatabaseName("ix_users_status_composite");
 
+                    b.HasIndex("RiskLevel", "IsFlaggedForReview", "KycStatus")
+                        .HasDatabaseName("ix_users_risk_composite");
+
                     b.ToTable("users", "identity", t =>
                         {
-                            t.HasComment("User accounts for authentication and identity management");
+                            t.HasComment("Users table with enhanced security, KYC/AML, and role-based access control");
                         });
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("assigned_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("AssignedBy")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("system")
+                        .HasColumnName("assigned_by");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("ix_user_roles_expires_at")
+                        .HasFilter("expires_at IS NOT NULL");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("ix_user_roles_is_active");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_user_roles_role_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_roles_user_id");
+
+                    b.HasIndex("UserId", "IsActive")
+                        .HasDatabaseName("ix_user_roles_user_active");
+
+                    b.ToTable("user_roles", "identity", t =>
+                        {
+                            t.HasComment("Many-to-many relationship between users and roles");
+
+                            t.HasCheckConstraint("ck_user_roles_expires_at", "expires_at IS NULL OR expires_at > assigned_at");
+                        });
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.FailedLoginAttempt", b =>
+                {
+                    b.HasOne("SmartFintechFinancial.Modules.Identity.Domain.Entities.User", "User")
+                        .WithMany("FailedLoginAttemptsLog")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_failed_login_attempts_users");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.LoginLog", b =>
+                {
+                    b.HasOne("SmartFintechFinancial.Modules.Identity.Domain.Entities.User", "User")
+                        .WithMany("LoginLogs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_login_logs_users");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.PasswordHistory", b =>
@@ -372,11 +2057,71 @@ namespace SmartFintechFinancial.Modules.Identity.Infrastructure.Persistence.Migr
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.RolePermission", b =>
+                {
+                    b.HasOne("SmartFintechFinancial.Modules.Identity.Domain.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_permissions_permissions");
+
+                    b.HasOne("SmartFintechFinancial.Modules.Identity.Domain.Entities.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_permissions_roles");
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.UserRole", b =>
+                {
+                    b.HasOne("SmartFintechFinancial.Modules.Identity.Domain.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_roles");
+
+                    b.HasOne("SmartFintechFinancial.Modules.Identity.Domain.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_users");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("SmartFintechFinancial.Modules.Identity.Domain.Entities.User", b =>
                 {
+                    b.Navigation("FailedLoginAttemptsLog");
+
+                    b.Navigation("LoginLogs");
+
                     b.Navigation("PasswordHistories");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

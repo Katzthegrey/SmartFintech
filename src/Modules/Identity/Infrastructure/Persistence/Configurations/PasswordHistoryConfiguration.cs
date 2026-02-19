@@ -9,7 +9,7 @@ public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHis
 {
     public void Configure(EntityTypeBuilder<PasswordHistory> builder)
     {
-        builder.ToTable("password_histories");
+        builder.ToTable("password_histories", "identity");
 
         builder.HasKey(ph => ph.Id);
 
@@ -26,14 +26,41 @@ public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHis
             .IsRequired()
             .HasMaxLength(255);
 
+        builder.Property(ph => ph.ChangedByIp)
+                 .HasColumnName("changed_by_ip")
+                 .HasMaxLength(45);
+
+
         builder.Property(ph => ph.CreatedAt)
             .HasColumnName("created_at")
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-        builder.HasIndex(ph => ph.UserId)
-            .HasDatabaseName("ix_password_histories_user_id");
+        builder.Property(ph => ph.CreatedBy)
+            .HasColumnName("created_by")
+            .HasMaxLength(100)
+            .HasDefaultValue("system");
 
-        builder.HasIndex(ph => ph.CreatedAt)
-            .HasDatabaseName("ix_password_histories_created_at");
+        builder.Property(ph => ph.UpdatedAt)
+            .HasColumnName("updated_at")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        builder.Property(ph => ph.UpdatedBy)
+            .HasColumnName("updated_by")
+            .HasMaxLength(100)
+            .HasDefaultValue("system");
+
+        builder.HasIndex(ph => ph.UserId)
+            .HasDatabaseName("ix_password_history_user_id");
+
+        builder.HasIndex(ph => new { ph.UserId, ph.CreatedAt })
+            .HasDatabaseName("ix_password_history_user_changed")
+            .IsDescending(false, true);
+
+        // Relationship
+        builder.HasOne(ph => ph.User)
+            .WithMany(u => u.PasswordHistories)
+            .HasForeignKey(ph => ph.UserId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("fk_password_history_users");
     }
 }
