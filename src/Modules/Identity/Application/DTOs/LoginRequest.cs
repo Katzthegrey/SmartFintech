@@ -9,5 +9,9 @@ namespace SmartFintechFinancial.Modules.Identity.Application.DTOs;
 public record LoginRequest(
     string Email,
     string Password,
-    string? TwoFactorCode = null, 
-    bool RememberMe = false);
+    string? TwoFactorCode = null,
+    bool RememberMe = false)
+
+{
+    public bool RequireVerifiedKyc { get; internal set; }
+}

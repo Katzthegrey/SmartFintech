@@ -13,5 +13,9 @@ namespace SmartFintechFinancial.Modules.Identity.Application.Settings
         public string Audience { get; set; } = string.Empty;
         public int AccessTokenExpiryMinutes { get; set; } = 60;
         public int RefreshTokenExpiryDays { get; set; } = 7;
+        public bool ValidateIpAddress { get; set; } = true;
+        public bool SingleDeviceSession { get; set; } = false;
+        public int ClockSkewSeconds { get; set; } = 300;
+
     }
 }

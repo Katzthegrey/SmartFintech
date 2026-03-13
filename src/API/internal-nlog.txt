@@ -1,0 +1,134 @@
+2026-02-28 20:11:30.3044 Error Error has been raised. Exception: NLog.NLogConfigurationException: 'FileTarget' cannot assign unknown property 'concurrentWrites'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2026-02-28 20:11:31.7264 Error Failed loading NLog configuration. 'FileTarget' cannot assign unknown property 'concurrentWrites'='true'  FilePath: C:\Users\Katz\SmartFintech\src\API\nlog.config Exception: NLog.NLogConfigurationException: Failed loading NLog configuration. 'FileTarget' cannot assign unknown property 'concurrentWrites'='true'  FilePath: C:\Users\Katz\SmartFintech\src\API\nlog.config
+ ---> NLog.NLogConfigurationException: 'FileTarget' cannot assign unknown property 'concurrentWrites'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+   at NLog.Config.LoggingConfigurationParser.ConfigureObjectFromAttributes[T](T targetObject, ValidatedConfigurationElement element, Boolean ignoreType)
+   at NLog.Config.LoggingConfigurationParser.ParseTargetElement(Target target, ValidatedConfigurationElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.LoggingConfigurationParser.AddNewTargetFromConfig(String targetTypeName, ValidatedConfigurationElement targetElement, Boolean asyncWrap, Dictionary`2 typeNameToDefaultTargetParameters, ValidatedConfigurationElement defaultWrapperElement)
+   at NLog.Config.LoggingConfigurationParser.ParseTargetsElement(ValidatedConfigurationElement targetsElement)
+   at NLog.Config.LoggingConfigurationParser.ParseNLogSection(ILoggingConfigurationElement configSection)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogSection(ILoggingConfigurationElement configSection)
+   at NLog.Config.LoggingConfigurationParser.LoadConfig(ILoggingConfigurationElement nlogConfig, String basePath)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(ILoggingConfigurationElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.ParseTopLevel(ILoggingConfigurationElement content, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.ParseFromTextReader(TextReader textReader, String filePath)
+   --- End of inner exception stack trace ---
+2026-02-28 20:11:31.7264 Error Failed loading from config file location: C:\Users\Katz\SmartFintech\src\API\nlog.config Exception: NLog.NLogConfigurationException: Failed loading NLog configuration. 'FileTarget' cannot assign unknown property 'concurrentWrites'='true'  FilePath: C:\Users\Katz\SmartFintech\src\API\nlog.config
+ ---> NLog.NLogConfigurationException: 'FileTarget' cannot assign unknown property 'concurrentWrites'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+   at NLog.Config.LoggingConfigurationParser.ConfigureObjectFromAttributes[T](T targetObject, ValidatedConfigurationElement element, Boolean ignoreType)
+   at NLog.Config.LoggingConfigurationParser.ParseTargetElement(Target target, ValidatedConfigurationElement targetElement, Dictionary`2 typeNameToDefaultTargetParameters)
+   at NLog.Config.LoggingConfigurationParser.AddNewTargetFromConfig(String targetTypeName, ValidatedConfigurationElement targetElement, Boolean asyncWrap, Dictionary`2 typeNameToDefaultTargetParameters, ValidatedConfigurationElement defaultWrapperElement)
+   at NLog.Config.LoggingConfigurationParser.ParseTargetsElement(ValidatedConfigurationElement targetsElement)
+   at NLog.Config.LoggingConfigurationParser.ParseNLogSection(ILoggingConfigurationElement configSection)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogSection(ILoggingConfigurationElement configSection)
+   at NLog.Config.LoggingConfigurationParser.LoadConfig(ILoggingConfigurationElement nlogConfig, String basePath)
+   at NLog.Config.XmlLoggingConfiguration.ParseNLogElement(ILoggingConfigurationElement nlogElement, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.ParseTopLevel(ILoggingConfigurationElement content, String filePath, Boolean autoReloadDefault)
+   at NLog.Config.XmlLoggingConfiguration.ParseFromTextReader(TextReader textReader, String filePath)
+   --- End of inner exception stack trace ---
+   at NLog.Config.XmlLoggingConfiguration.ParseFromTextReader(TextReader textReader, String filePath)
+   at NLog.Config.XmlLoggingConfiguration..ctor(TextReader xmlSource, String filePath, LogFactory logFactory)
+   at NLog.Config.LoggingConfigurationFileLoader.LoadXmlLoggingConfigurationFile(LogFactory logFactory, String configFile)
+   at NLog.Config.LoggingConfigurationFileLoader.TryLoadLoggingConfiguration(LogFactory logFactory, String configFile, LoggingConfiguration& config)
+2026-02-28 20:21:05.7167 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-28 20:21:05.8702 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-02-28 20:21:05.9750 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-02-28 20:21:06.0043 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-02-28 20:21:06.3695 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-02-28 23:01:51.6555 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-28 23:01:51.7594 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-02-28 23:01:51.7886 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-02-28 23:01:51.8124 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-02-28 23:01:51.9073 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-02-28 23:07:26.6123 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-28 23:07:26.6420 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-02-28 23:07:26.6470 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-02-28 23:07:26.6676 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-02-28 23:07:26.7548 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-02-28 23:23:54.8009 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-28 23:23:54.8424 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-02-28 23:23:54.8424 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-02-28 23:23:54.8804 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-02-28 23:23:55.0779 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-03 22:15:07.1457 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-03 22:15:07.3083 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-03 22:15:07.3384 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-03 22:15:07.3623 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-03 22:15:07.4863 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 08:54:16.8767 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 08:54:17.5189 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 08:54:17.5405 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 08:54:17.5643 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 08:54:17.6622 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 09:27:31.2088 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 09:27:31.2736 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 09:27:31.2864 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 09:27:31.3319 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 09:27:31.4262 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=/mnt/c/Users/Katz/SmartFintech/src/API/nlog.config
+2026-03-04 09:30:36.8999 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 09:30:36.9576 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 09:30:36.9697 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 09:30:37.0167 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 09:30:37.1797 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=/mnt/c/Users/Katz/SmartFintech/src/API/nlog.config
+2026-03-04 11:36:58.6954 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 11:36:58.7814 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 11:36:58.7951 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 11:36:58.8233 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 11:36:58.8895 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=/mnt/c/Users/Katz/SmartFintech/src/API/nlog.config
+2026-03-04 11:44:37.7429 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 11:44:37.9947 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 11:44:37.9947 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 11:44:38.0854 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 11:44:38.2632 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 11:55:10.3719 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 11:55:10.4083 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 11:55:10.4083 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 11:55:10.4371 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 11:55:10.5963 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 11:57:55.5154 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 11:57:55.5538 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 11:57:55.5587 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 11:57:55.5856 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 11:57:55.7315 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 12:06:28.7561 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 12:06:28.7975 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 12:06:28.7975 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 12:06:28.8308 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 12:06:28.9908 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 12:12:03.8943 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 12:12:03.9177 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 12:12:03.9177 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 12:12:03.9508 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 12:12:04.0528 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 12:26:09.2560 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 12:26:09.3013 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 12:26:09.3068 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 12:26:09.3334 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 12:26:09.5178 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 12:52:32.7646 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 12:52:32.9213 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 12:52:32.9213 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 12:52:32.9460 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 12:52:33.0374 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 13:50:35.9135 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 13:50:35.9235 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 13:50:35.9235 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 13:50:35.9333 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 13:50:35.9639 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-04 22:59:04.8330 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-04 22:59:05.4073 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-04 22:59:05.4073 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-04 22:59:05.4329 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-04 22:59:06.1856 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+2026-03-05 11:07:06.4474 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-03-05 11:07:06.5385 Info Registered target NLog.Targets.FileTarget(Name=validationfile)
+2026-03-05 11:07:06.5879 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2026-03-05 11:07:06.6131 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.1.1.5033. Product version: 6.1.1+0e83056311dfcda0493d7db60b7191d0927eb5da. GlobalAssemblyCache: False
+2026-03-05 11:07:06.7268 Info Configuration initialized: TargetNames=validationfile, allfile, logconsole, ConfigItems=43, AutoReload=true, FilePath=C:\Users\Katz\SmartFintech\src\API\nlog.config
+
+
+//
+
+Added the following authentication with jwt generation,  login and logout backend functionality, refresh token rotaion and revokation(not sure thats a real word haha) , role endpoints for testing routing. tested all the implemented security from sql injections to xss pen tests and finally ironed out bugs conflicting with token creation and others

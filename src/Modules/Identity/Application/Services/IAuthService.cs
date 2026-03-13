@@ -15,10 +15,9 @@ public interface IAuthService
     Task<bool> VerifyPasswordAsync(string email, string password);
     Task<bool> LockAccountAsync(string email);
     Task<bool> UnlockAccountAsync(string email);
+
+    Task<AuthResult> RefreshTokenAsync(string refreshToken, string ipAddress);
+    Task<bool> RevokeTokenAsync(string refreshToken, string ipAddress);
+    Task<AuthResult> LogoutAsync(Guid userId, string? refreshToken = null);
 }
 
-public record AuthResult(
-    bool Success,
-    string? Error = null,
-    int? FailedAttempts = null,
-    bool? AccountLocked = null);

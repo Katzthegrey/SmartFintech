@@ -151,6 +151,6 @@ public class BruteForceProtection : IBruteForceProtection
 
     public Task RecordFailedAttemptAsync(string email, string ipAddress)
     {
-        throw new NotImplementedException();
+        return RecordFailedAttemptAsync(email, ipAddress, null); 
     }
 }

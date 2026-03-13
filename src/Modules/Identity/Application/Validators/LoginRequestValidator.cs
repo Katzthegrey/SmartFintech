@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using SmartFintechFinancial.Modules.Identity.Application.DTOs;
+using System.Text.RegularExpressions;
 
 namespace SmartFintechFinancial.Modules.Identity.Application.Validators;
 
@@ -28,8 +29,33 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
         if (string.IsNullOrEmpty(input))
             return true;
 
-        var sqlKeywords = new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "DROP", "UNION", "OR", "AND", "'", ";", "--", "#" };
-        return !sqlKeywords.Any(keyword =>
-            input.ToUpperInvariant().Contains(keyword));
+        // SQL keywords to check for as whole words
+        var sqlKeywords = new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "DROP", "UNION", "OR", "AND" };
+
+        // SQL symbols to check for anywhere
+        var sqlSymbols = new[] { "'", ";", "--", "#" };
+
+        // Check for SQL symbols first (these are always bad anywhere)
+        foreach (var symbol in sqlSymbols)
+        {
+            if (input.Contains(symbol))
+            {
+                return false;
+            }
+        }
+
+        // Check for SQL keywords as whole words using regex word boundaries
+        var upperInput = input.ToUpperInvariant();
+        foreach (var keyword in sqlKeywords)
+        {
+            // \b means word boundary - ensures we match whole words only
+            var pattern = $@"\b{keyword}\b";
+            if (Regex.IsMatch(upperInput, pattern))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -1,9 +1,7 @@
-
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
+    container_name: smartfintech-postgres-1
     environment:
       POSTGRES_DB: SmartFintechFinancial
       POSTGRES_USER: postgres
@@ -12,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - smartfintech_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -20,24 +20,65 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: smartfintech-redis-1
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
+    networks:
+      - smartfintech_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 60s   
 
   adminer:
     image: adminer
+    container_name: smartfintech-adminer-1
     ports:
       - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - smartfintech_network
+
+  api:
+    build:
+      context: .
+      dockerfile: src/API/Dockerfile
+    container_name: smartfintech-api-1
+    ports:
+      - "5085:8080"
+      - "5086:8081" # for https ports
+      - "9229:9229" #Debug port
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=SmartFintechFinancial;Username=postgres;Password=ANGEL935;Search Path=identity,public
+      - Redis__ConnectionString=redis:6379
+      - JwtSettings__Key=e1607079885b451ce7e7cac4d571a5e8
+      - JwtSettings__Issuer=https://localhost:7001
+      - JwtSettings__Audience=https://localhost:5173
+      - JwtSettings__AccessTokenExpiryMinutes=60
+      - JwtSettings__RefreshTokenExpiryDays=7
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - smartfintech_network
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
+
+networks:
+  smartfintech_network:
+    driver: bridge
 
 volumes:
   postgres_data:
